@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 
 ASSN = 2
 CLASS= cs143
@@ -23,6 +24,7 @@ FFLAGS= -d -ocool-lex.cc
 
 CC=g++
 CFLAGS= -g -Wall -Wno-unused -Wno-write-strings ${CPPINCLUDE}
+LDFLAGS= -static
 FLEX=flex ${FFLAGS}
 DEPEND = ${CC} -MM ${CPPINCLUDE}
 
@@ -36,7 +38,7 @@ ${OUTPUT}:	lexer test.cl
 	-./lexer test.cl >test.output 2>&1 
 
 lexer: ${OBJS}
-	${CC} ${CFLAGS} ${OBJS} ${LIB} -o lexer
+	${CC} ${LDFLAGS} ${CFLAGS} ${OBJS} ${LIB} -o lexer
 
 .cc.o:
 	${CC} ${CFLAGS} -c $<
@@ -45,7 +47,7 @@ cool-lex.cc: cool.flex
 	${FLEX} cool.flex
 
 dotest:	lexer test.cl
-	./lexer test.cl
+	diff <(./lexer test.cl) <(lexer test.cl)
 
 ${LIBS}:
 	${CLASSDIR}/etc/link-object ${ASSN} $@

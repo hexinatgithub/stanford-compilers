@@ -106,3 +106,18 @@ This setup will use Dev Containers as development environment. All the tool, lib
 2. Open `Visual Studio Code`.
 3. Install [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) pulgin.
 3. Open command palette, select `open folder in container` command, then `Visual Studio Code` will build and connect to the container.
+
+## Trouble Shooting
+
+### undefined reference to 'yylex'
+
+The reason is caused by use c++ library instead c library. See [here](https://stackoverflow.com/a/8424044/4775927).
+
+Just modify Makefile to link `libc` static.
+
+```
+LDFLAGS= -static
+
+lexer: ${OBJS}
+        ${CC} ${LDFLAGS} ${CFLAGS} ${OBJS} ${LIB} -o lexer
+```
