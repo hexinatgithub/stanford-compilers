@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 
 ASSN = 3
 CLASS= cs143
@@ -52,9 +53,9 @@ cool-parse.cc cool-parse.h: cool.y
 
 dotest:	parser good.cl bad.cl
 	@echo "\nRunning parser on good.cl\n"
-	-./myparser good.cl 
+	-diff <(./myparser good.cl 2>1) <(./tester good.cl 2>1)
 	@echo "\nRunning parser on bad.cl\n"
-	-./myparser bad.cl
+	-diff <(./myparser bad.cl 2>1) <(./tester bad.cl 2>1)
 
 ${LIBS}:
 	${CLASSDIR}/etc/link-object ${ASSN} $@

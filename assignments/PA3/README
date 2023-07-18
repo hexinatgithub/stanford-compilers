@@ -130,3 +130,13 @@ Instructions
 
 Write-up for PA3
 ----------------
+
+test recover from error:
+	class error defination:
+		error definition at first, middle and last
+		interleave error definition
+		more than two successive error definition
+
+	recover from bad feature/let binding/block expression and going on to the next
+
+Some syntactically struct and keyword are tested but not all.
