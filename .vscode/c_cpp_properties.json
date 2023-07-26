@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Compilers",
+            "includePath": [
+                "${workspaceFolder}/include/PA4"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/assignments/PA4",
+                    "${workspaceFolder}/include/PA4"
+                ]
+            },
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ]
+        }
+    ],
+    "version": 4
+}

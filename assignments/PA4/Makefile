@@ -7,7 +7,7 @@ AR= gar
 ARCHIVE_NEW= -cr
 RANLIB= gar -qs
 
-SRC= semant.cc semant.h cool-tree.h cool-tree.handcode.h good.cl bad.cl README
+SRC= semant.cc semant.h cool-tree.h cool-tree.handcode.h good.cl README
 CSRC= semant-phase.cc symtab_example.cc  handle_flags.cc  ast-lex.cc ast-parse.cc utilities.cc stringtab.cc dumptype.cc tree.cc cool-tree.cc
 TSRC= mycoolc mysemant cool-tree.aps
 CGEN=
@@ -56,11 +56,11 @@ symtab_example: symtab_example.cc
 .cc.o:
 	${CC} ${CFLAGS} -c $<
 
-dotest:	semant good.cl bad.cl
+dotest:	semant test/good.cl 
 	@echo "\nRunning semantic checker on good.cl\n"
-	-./mysemant good.cl
+	-./mysemant test/good.cl 1>/dev/null
 	@echo "\nRunning semantic checker on bad.cl\n"
-	-./mysemant bad.cl
+	find test/bad*.cl -exec ./mysemant {} \; 1>/dev/null
 
 ${LIBS}:
 	${CLASSDIR}/etc/link-object ${ASSN} $@

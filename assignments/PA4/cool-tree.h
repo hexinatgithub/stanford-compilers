@@ -10,8 +10,17 @@
 
 
 #include "tree.h"
+#include "symtab.h"
 #include "cool-tree.handcode.h"
 
+class ClassTable;
+typedef ClassTable *ClassTableP;
+
+typedef SymbolTable<Symbol, Entry> ObjectEnv;
+typedef ObjectEnv *ObjectEnvP;
+
+typedef SymbolTable<Symbol, List<Entry>> MethodEnv;
+typedef MethodEnv *MethodEnvP;
 
 // define the class for phylum
 // define simple phylum - Program
@@ -38,6 +47,12 @@ public:
 
 #ifdef Class__EXTRAS
    Class__EXTRAS
+   virtual Symbol get_name() = 0;
+   virtual Symbol get_parent() = 0;
+   virtual ObjectEnv& getO() = 0;
+   virtual MethodEnv& getM() = 0;
+   virtual void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_) = 0;
+   virtual void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_) = 0;
 #endif
 };
 
@@ -52,6 +67,8 @@ public:
 
 #ifdef Feature_EXTRAS
    Feature_EXTRAS
+   virtual void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_) = 0;
+   virtual void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_) = 0;
 #endif
 };
 
@@ -66,6 +83,10 @@ public:
 
 #ifdef Formal_EXTRAS
    Formal_EXTRAS
+   virtual int errors() = 0;
+   virtual Symbol get_name() = 0;
+   virtual Symbol get_type_decl() = 0;
+   virtual void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_) = 0;
 #endif
 };
 
@@ -80,6 +101,8 @@ public:
 
 #ifdef Expression_EXTRAS
    Expression_EXTRAS
+   virtual void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_) = 0;
+   virtual void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_) = 0;
 #endif
 };
 
@@ -94,6 +117,10 @@ public:
 
 #ifdef Case_EXTRAS
    Case_EXTRAS
+   virtual Symbol get_expr_type() = 0;
+   virtual Symbol get_type_decl() = 0;
+   virtual void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_) = 0;
+   virtual void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_) = 0;
 #endif
 };
 
@@ -152,12 +179,17 @@ protected:
    Symbol parent;
    Features features;
    Symbol filename;
+
+   bool analysised;
+   ObjectEnv CO;
+   MethodEnv CM;
 public:
    class__class(Symbol a1, Symbol a2, Features a3, Symbol a4) {
       name = a1;
       parent = a2;
       features = a3;
       filename = a4;
+      analysised = false;
    }
    Class_ copy_Class_();
    void dump(ostream& stream, int n);
@@ -167,6 +199,12 @@ public:
 #endif
 #ifdef class__EXTRAS
    class__EXTRAS
+   Symbol get_name() {return name;};
+   Symbol get_parent() {return parent;};
+   ObjectEnv& getO() {return CO;};
+   MethodEnv& getM() {return CM;};
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 };
 
@@ -178,6 +216,7 @@ protected:
    Formals formals;
    Symbol return_type;
    Expression expr;
+   ObjectEnv MO;
 public:
    method_class(Symbol a1, Formals a2, Symbol a3, Expression a4) {
       name = a1;
@@ -190,6 +229,8 @@ public:
 
 #ifdef Feature_SHARED_EXTRAS
    Feature_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef method_EXTRAS
    method_EXTRAS
@@ -203,6 +244,7 @@ protected:
    Symbol name;
    Symbol type_decl;
    Expression init;
+   ObjectEnv AO;
 public:
    attr_class(Symbol a1, Symbol a2, Expression a3) {
       name = a1;
@@ -214,6 +256,8 @@ public:
 
 #ifdef Feature_SHARED_EXTRAS
    Feature_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef attr_EXTRAS
    attr_EXTRAS
@@ -226,10 +270,12 @@ class formal_class : public Formal_class {
 protected:
    Symbol name;
    Symbol type_decl;
+   int semant_errors;
 public:
    formal_class(Symbol a1, Symbol a2) {
       name = a1;
       type_decl = a2;
+      semant_errors = 0;
    }
    Formal copy_Formal();
    void dump(ostream& stream, int n);
@@ -239,6 +285,10 @@ public:
 #endif
 #ifdef formal_EXTRAS
    formal_EXTRAS
+   int errors() {return semant_errors;}
+   Symbol get_name() {return name;};
+   Symbol get_type_decl() {return type_decl;};
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 };
 
@@ -249,6 +299,7 @@ protected:
    Symbol name;
    Symbol type_decl;
    Expression expr;
+   ObjectEnv BO;
 public:
    branch_class(Symbol a1, Symbol a2, Expression a3) {
       name = a1;
@@ -263,6 +314,10 @@ public:
 #endif
 #ifdef branch_EXTRAS
    branch_EXTRAS
+   Symbol get_expr_type() {return expr->type;};
+   Symbol get_type_decl() {return type_decl;};
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 };
 
@@ -282,6 +337,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef assign_EXTRAS
    assign_EXTRAS
@@ -308,6 +365,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef static_dispatch_EXTRAS
    static_dispatch_EXTRAS
@@ -332,6 +391,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef dispatch_EXTRAS
    dispatch_EXTRAS
@@ -356,6 +417,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef cond_EXTRAS
    cond_EXTRAS
@@ -378,6 +441,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef loop_EXTRAS
    loop_EXTRAS
@@ -400,6 +465,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef typcase_EXTRAS
    typcase_EXTRAS
@@ -420,6 +487,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef block_EXTRAS
    block_EXTRAS
@@ -434,6 +503,7 @@ protected:
    Symbol type_decl;
    Expression init;
    Expression body;
+   ObjectEnv LO;
 public:
    let_class(Symbol a1, Symbol a2, Expression a3, Expression a4) {
       identifier = a1;
@@ -446,6 +516,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef let_EXTRAS
    let_EXTRAS
@@ -468,6 +540,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef plus_EXTRAS
    plus_EXTRAS
@@ -490,6 +564,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef sub_EXTRAS
    sub_EXTRAS
@@ -512,6 +588,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef mul_EXTRAS
    mul_EXTRAS
@@ -534,6 +612,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef divide_EXTRAS
    divide_EXTRAS
@@ -554,6 +634,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef neg_EXTRAS
    neg_EXTRAS
@@ -576,6 +658,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef lt_EXTRAS
    lt_EXTRAS
@@ -598,6 +682,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef eq_EXTRAS
    eq_EXTRAS
@@ -620,6 +706,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef leq_EXTRAS
    leq_EXTRAS
@@ -640,6 +728,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef comp_EXTRAS
    comp_EXTRAS
@@ -660,6 +750,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_) {};
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef int_const_EXTRAS
    int_const_EXTRAS
@@ -680,6 +772,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_) {};
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef bool_const_EXTRAS
    bool_const_EXTRAS
@@ -700,6 +794,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_) {};
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef string_const_EXTRAS
    string_const_EXTRAS
@@ -720,6 +816,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_) {};
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef new__EXTRAS
    new__EXTRAS
@@ -740,6 +838,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef isvoid_EXTRAS
    isvoid_EXTRAS
@@ -758,6 +858,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_) {};
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef no_expr_EXTRAS
    no_expr_EXTRAS
@@ -778,6 +880,8 @@ public:
 
 #ifdef Expression_SHARED_EXTRAS
    Expression_SHARED_EXTRAS
+   void analysis(ClassTableP, ObjectEnv&, MethodEnv&, Class_) {};
+   void semant(ClassTableP, ObjectEnv&, MethodEnv&, Class_);
 #endif
 #ifdef object_EXTRAS
    object_EXTRAS

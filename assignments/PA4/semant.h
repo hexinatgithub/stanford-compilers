@@ -13,6 +13,8 @@
 
 class ClassTable;
 typedef ClassTable *ClassTableP;
+typedef Class__class ClassEntry;
+typedef SymbolTable<Symbol, ClassEntry> ClassIndex;
 
 // This is a structure that may be used to contain the semantic
 // information such as the inheritance graph.  You may use it or not as
@@ -24,6 +26,9 @@ private:
   int semant_errors;
   void install_basic_classes();
   ostream& error_stream;
+  ClassIndex table;
+  bool is_subclass(Symbol c1, Symbol c2);
+  Symbol join(Symbol c1, Symbol c2);
 
 public:
   ClassTable(Classes);
@@ -31,6 +36,9 @@ public:
   ostream& semant_error();
   ostream& semant_error(Class_ c);
   ostream& semant_error(Symbol filename, tree_node *t);
+  Class_ get(Symbol name) {return table.lookup(name);};
+  bool is_subclass(Symbol c1, Symbol c2, Symbol current);
+  Symbol join(Symbol c1, Symbol c2, Symbol current);
 };
 
 
