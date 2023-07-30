@@ -83,13 +83,6 @@ COOL is precisely defined in specification documents, the most relevant ones are
  * [Treewalk Code Generator](assignments/PA5/cgen.cc) - writing a pass for code generation using a naive treewalk algorithm, generating code for the 'stack machine')
  	* The input to the code generator is the attributed abstract syntax tree and the output is a file consisting of MIPS instructions
  	* [Here](handouts/PA5.pdf) is the assignment specification 
-	
-## Testing and Grading
-Most compiler phases are tested using the automated scripts which generate test cases and run each phase on the generated test cases. Almost all scripts were provided by the skeleton coursework project. All compiler phases are written and treated separately (ex: semantic analysis depends on the reference parser and lexer instead of ones written in this repository). This is to ensure that each phase generates only its own mistakes, since the mistakes made in previous phases could easily propagate in some later phase. 
-
-In the last phase (code generator), reference lexer, parser and semantic analyser are replaced by the ones written in this repository since they have shown 100% accuracy, so it was reasonable to treat them as correct, although it may be wrong. There were precisely 270 test cases across all phases.
-
-To test the whole project, simply run **run-all-phases-test.sh** in the root of repository. This script should (re)compile all phases, test them separately and link them into a compiler which will be tested as a whole executable.
 
 ## Sample COOL Programs
 In the [examples](examples) folder, there are various example COOL programs. Some of them are very simple and illustrate only key features of the COOL language, but there a few ones which are quite advanced.
