@@ -3,12 +3,12 @@
         {
             "name": "Compilers",
             "includePath": [
-                "${workspaceFolder}/include/PA4"
+                "${workspaceFolder}/include/PA5"
             ],
             "browse": {
                 "path": [
-                    "${workspaceFolder}/assignments/PA4",
-                    "${workspaceFolder}/include/PA4"
+                    "${workspaceFolder}/assignments/PA5",
+                    "${workspaceFolder}/include/PA5"
                 ]
             },
             "defines": [

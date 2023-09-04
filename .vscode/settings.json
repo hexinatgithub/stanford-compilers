@@ -8,7 +8,10 @@
         "istream": "cpp",
         "tuple": "cpp",
         "utility": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "system_error": "cpp",
+        "type_traits": "cpp"
     },
     "editor.formatOnSaveMode": "modifications",
+    "C_Cpp.default.compilerPath": "/usr/bin/g++",
 }

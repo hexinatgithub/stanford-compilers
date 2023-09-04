@@ -114,3 +114,9 @@ LDFLAGS= -static
 lexer: ${OBJS}
         ${CC} ${LDFLAGS} ${CFLAGS} ${OBJS} ${LIB} -o lexer
 ```
+
+### spim `cannot open file: '../lib/trap.handler'`
+
+When you work on PA5, you may encounter this error. The reason is that the `spim` simulator use relative path to find the `trap.handler` file. So you need go to the [./bin](./bin/) folder and run [spim](./bin/spim) command there.
+
+`spim ../assignments/PA5/example.s`

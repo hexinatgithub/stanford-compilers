@@ -44,7 +44,7 @@ compile:	cgen change-prot
 change-prot:
 	@-chmod 660 ${SRC} ${OUTPUT}
 
-cgen:	${OBJS} parser semant
+cgen:	${OBJS} lexer parser semant
 	${CC} ${CFLAGS} ${OBJS} ${LIB} -o cgen
 
 .cc.o:
@@ -52,7 +52,10 @@ cgen:	${OBJS} parser semant
 
 dotest:	cgen example.cl
 	@echo "\nRunning code generator on example.cl\n"
-	-./mycoolc example.cl
+	-./mycoolc example.cl && cd ../../bin && spim -file ../assignments/PA5/example.s
+	-./mycoolc dispatch_on_void.cl && cd ../../bin && spim -file ../assignments/PA5/dispatch_on_void.s
+	-./mycoolc case_on_void.cl && cd ../../bin && spim -file ../assignments/PA5/case_on_void.s
+	-./mycoolc miss_branch.cl && cd ../../bin && spim -file ../assignments/PA5/miss_branch.s
 
 ${LIBS}:
 	${CLASSDIR}/etc/link-object ${ASSN} $@

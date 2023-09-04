@@ -12,6 +12,11 @@
 #include "tree.h"
 #include "cool-tree.handcode.h"
 
+class CgenNode;
+typedef CgenNode *CgenNodeP;
+
+class Environment;
+typedef Environment *EnvironmentP;
 
 // define the class for phylum
 // define simple phylum - Program
@@ -52,6 +57,8 @@ public:
 
 #ifdef Feature_EXTRAS
    Feature_EXTRAS
+   virtual void layout(CgenNodeP) = 0;
+   virtual void code_def(EnvironmentP nd, ostream& str) = 0;
 #endif
 };
 
@@ -190,6 +197,8 @@ public:
 
 #ifdef Feature_SHARED_EXTRAS
    Feature_SHARED_EXTRAS
+   void layout(CgenNodeP nd);
+   void code_def(EnvironmentP env, ostream& str);
 #endif
 #ifdef method_EXTRAS
    method_EXTRAS
@@ -214,6 +223,8 @@ public:
 
 #ifdef Feature_SHARED_EXTRAS
    Feature_SHARED_EXTRAS
+   void layout(CgenNodeP nd);
+   void code_def(EnvironmentP env, ostream& str);
 #endif
 #ifdef attr_EXTRAS
    attr_EXTRAS

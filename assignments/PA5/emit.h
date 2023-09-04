@@ -13,6 +13,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 #include "stringtab.h"
+#include "stringtab_functions.h"
 
 #define MAXINT  100000000    
 #define WORD_SIZE    4
@@ -31,7 +32,7 @@
 #define METHOD_SEP           "."
 #define CLASSINIT_SUFFIX     "_init"
 #define PROTOBJ_SUFFIX       "_protObj"
-#define OBJECTPROTOBJ        "Object"PROTOBJ_SUFFIX
+#define OBJECTPROTOBJ        "Object" PROTOBJ_SUFFIX
 #define INTCONST_PREFIX      "int_const"
 #define STRCONST_PREFIX      "str_const"
 #define BOOLCONST_PREFIX     "bool_const"
@@ -80,7 +81,7 @@
 //
 #define JALR  "\tjalr\t"  
 #define JAL   "\tjal\t"                 
-#define RET   "\tjr\t"RA"\t"
+#define RET   "\tjr\t" RA "\t"
 
 #define SW    "\tsw\t"
 #define LW    "\tlw\t"
@@ -104,5 +105,10 @@
 #define BLEQ     "\tble\t"
 #define BLT      "\tblt\t"
 #define BGT      "\tbgt\t"
+#define NOR      "\tnor\t"
 
-
+// runtime label
+#define DISPATCH_ABORT "_dispatch_abort"
+#define _CASE_ABORT    "_case_abort"
+#define _CASE_ABORT2   "_case_abort2"
+#define EQUALITY_TEST  "equality_test"

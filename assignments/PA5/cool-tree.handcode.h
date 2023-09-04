@@ -77,32 +77,40 @@ void dump_with_types(ostream&,int);
 
 
 #define Formal_EXTRAS                              \
-virtual void dump_with_types(ostream&,int) = 0;
+virtual void dump_with_types(ostream&,int) = 0;	   \
+virtual Symbol get_name() = 0;					   \
+virtual Symbol get_type_decl() = 0;
 
 
 #define formal_EXTRAS                           \
-void dump_with_types(ostream&,int);
+void dump_with_types(ostream&,int);				\
+Symbol get_name() { return name; };				\
+Symbol get_type_decl() { return type_decl; };
 
 
 #define Case_EXTRAS                             \
-virtual void dump_with_types(ostream& ,int) = 0;
+virtual void dump_with_types(ostream& ,int) = 0; \
+virtual void code_typecase(EnvironmentP, ostream&) = 0; \
+virtual void code_expr(EnvironmentP, ostream&) = 0;
 
 
 #define branch_EXTRAS                                   \
-void dump_with_types(ostream& ,int);
+void dump_with_types(ostream& ,int);					\
+void code_typecase(EnvironmentP, ostream&); 			\
+void code_expr(EnvironmentP, ostream&);
 
 
 #define Expression_EXTRAS                    \
 Symbol type;                                 \
 Symbol get_type() { return type; }           \
 Expression set_type(Symbol s) { type = s; return this; } \
-virtual void code(ostream&) = 0; \
+virtual void code(EnvironmentP, ostream&) = 0;		\
 virtual void dump_with_types(ostream&,int) = 0;  \
 void dump_type(ostream&, int);               \
 Expression_class() { type = (Symbol) NULL; }
 
 #define Expression_SHARED_EXTRAS           \
-void code(ostream&); 			   \
+void code(EnvironmentP, ostream&); 			   \
 void dump_with_types(ostream&,int); 
 
 
